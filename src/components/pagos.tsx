@@ -1,7 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { calcularAcumulado, JugadorPago } from "../utils/calcularAcumulado.ts";
+import { Apodos } from "../models/models.ts";
 import "./pagos.css";
 import CustomSelect from "./CustomSelect.tsx";
+
+const pagosIniciales = {
+  [Apodos.Deiviiss]: 8.5,
+  [Apodos.Polfovich]: 10,
+};
 
 export const PagosPanel = () => {
   const [selectedBloque, setSelectedBloque] = useState(0);
@@ -34,7 +40,34 @@ export const PagosPanel = () => {
   useEffect(() => {
     const bloque = bloques.find((b) => b.id === selectedBloque);
     if (!bloque) return;
-    const resultado = calcularAcumulado(bloque.desde, bloque.hasta);
+    const resultado = calcularAcumulado(
+      bloque.desde,
+      bloque.hasta,
+      false,
+      false,
+    );
+    if (bloque.id === 0) {
+      resultado.find((j) => j.jugador === Apodos.Deiviiss)!.pago +=
+        pagosIniciales[Apodos.Deiviiss];
+      resultado.find((j) => j.jugador === Apodos.Polfovich)!.pago +=
+        pagosIniciales[Apodos.Polfovich];
+    }
+    if (bloque.id === 1) {
+      resultado.push(
+        {
+          jugador: Apodos.Deiviiss,
+          puntos: 0,
+          pago: pagosIniciales[Apodos.Deiviiss],
+          posicion: 0,
+        },
+        {
+          jugador: Apodos.Polfovich,
+          puntos: 0,
+          pago: pagosIniciales[Apodos.Polfovich],
+          posicion: 0,
+        },
+      );
+    }
     const resultadoOrdenado = [...resultado].sort((a, b) => a.pago - b.pago);
 
     let lastPago: number | null = null;

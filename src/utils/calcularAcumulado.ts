@@ -42,7 +42,8 @@ export const pagos12: Record<number, number> = {
   12: 4,
 };
 
-const getPagosPorPosicion = (_numJornada: number) => pagos10;
+const getPagosPorPosicion = (_numJornada: number, numeroJugadores = 10) =>
+  numeroJugadores > 10 ? pagos12 : pagos10;
 
 /**
  * Calcula puntos y pagos acumulados de los jugadores en un rango de jornadas.
@@ -51,11 +52,18 @@ export const calcularAcumulado = (
   desde: number,
   hasta: number,
   esEstadistica?: boolean,
+  incluirCompensaciones = false,
 ): JugadorPago[] => {
   const todosJugadores = Object.values(Apodos);
 
-  // Para la nueva temporada no excluimos desertores: todos son activos.
-  const jugadoresFiltrados = [...todosJugadores];
+  const altasPorJugador: Partial<Record<Apodos, number>> = {
+    [Apodos.Deiviiss]: 6,
+    [Apodos.Polfovich]: 7,
+  };
+
+  const jugadoresFiltrados = todosJugadores.filter(
+    (jugador) => (altasPorJugador[jugador] ?? 1) <= hasta,
+  );
 
   const acumulado: Record<string, JugadorPago> = {};
   jugadoresFiltrados.forEach((j) => {
@@ -73,7 +81,7 @@ export const calcularAcumulado = (
 
     if (resultados.length === 0) return;
 
-    const pagosPos = getPagosPorPosicion(jornada.numero);
+    const pagosPos = getPagosPorPosicion(jornada.numero, resultados.length);
 
     // Factor:
     // - Jornadas múltiplos de 5 -> doble (x2).
@@ -114,6 +122,48 @@ export const calcularAcumulado = (
       acumulado[r.jugador].pago += pago;
     });
   });
+
+  if (incluirCompensaciones) {
+    Object.entries(altasPorJugador).forEach(([jugador, alta]) => {
+      if (!alta || !acumulado[jugador]) return;
+
+      const jornadasAusencia = data.jornadas.filter(
+        (jornada) =>
+          jornada.numero >= desde &&
+          jornada.numero < alta &&
+          jornada.numero <= hasta,
+      );
+
+      jornadasAusencia.forEach((jornada) => {
+        const resultados = [...jornada.resultados].sort(
+          (a, b) => b.puntos - a.puntos,
+        );
+        if (resultados.length === 0) return;
+
+        const pagosPos = getPagosPorPosicion(jornada.numero, resultados.length);
+        const factor = jornada.numero % 5 === 0 ? 2 : 1;
+        const pagosJornada = resultados.map((resultado, posicion) => {
+          const empatados = resultados.filter(
+            (otro) => otro.puntos === resultado.puntos,
+          );
+          const pagoBase = pagosPos[posicion + 1] || 0;
+          return empatados.length > 1
+            ? (empatados.reduce(
+                (total, empate) =>
+                  total + (pagosPos[resultados.indexOf(empate) + 1] || 0),
+                0,
+              ) /
+                empatados.length) *
+                factor
+            : pagoBase * factor;
+        });
+
+        acumulado[jugador].pago +=
+          pagosJornada.reduce((total, pago) => total + pago, 0) /
+          pagosJornada.length;
+      });
+    });
+  }
 
   // Calcular posiciones finales del rango
   const listaFinal = Object.values(acumulado).sort(
@@ -268,7 +318,10 @@ export const jornadasLibradas = (): Record<Apodos, number> => {
   data.jornadas.forEach((jornada) => {
     if (!Array.isArray(jornada.resultados)) return;
 
-    const pagosPos = getPagosPorPosicion(jornada.numero);
+    const pagosPos = getPagosPorPosicion(
+      jornada.numero,
+      jornada.resultados.length,
+    );
 
     jornada.resultados.forEach((r, idx) => {
       if (!r) return;

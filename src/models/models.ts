@@ -38,5 +38,7 @@ export enum Apodos {
   Mitxi = "Mitxi",
   Fresnhel = "Fresnhel",
   Dennis = "Dennis",
-  Golo = "Golo",
+  AnthonyGORDON = "Anthony GORDON",
+  Deiviiss = "Deiviiss",
+  Polfovich = "Polfovich",
 }
