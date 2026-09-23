@@ -1,0 +1,144 @@
+.install-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+  background: rgb(15 23 42 / 48%);
+}
+
+.install-modal {
+  position: relative;
+  width: min(100%, 27rem);
+  padding: 1.5rem;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 1rem;
+  background: var(--surface, #fff);
+  box-shadow: 0 1rem 3rem rgb(15 23 42 / 25%);
+  animation: install-modal-enter 180ms ease-out;
+}
+
+.install-modal__close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted, #64748b);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.install-modal__surprise-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 10rem;
+  margin: -0.35rem auto 1rem;
+  border-radius: 0.8rem;
+  object-fit: contain;
+}
+
+.install-modal__success-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 13rem;
+  margin: -0.35rem auto 1rem;
+  border-radius: 0.8rem;
+  object-fit: contain;
+}
+
+.install-modal__success {
+  text-align: center;
+}
+
+.install-modal__success-image {
+  height: 13rem;
+}
+
+.install-modal__eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--primary, #2563eb);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.install-modal h2 {
+  margin: 0;
+  color: var(--text, #0f172a);
+  font-size: 1.45rem;
+}
+
+.install-modal__intro {
+  margin: 0.75rem 0 1rem;
+  color: var(--text-muted, #64748b);
+  line-height: 1.5;
+}
+
+.install-modal__steps {
+  padding: 0.9rem 1rem;
+  border-radius: 0.7rem;
+  background: var(--background, #f8fafc);
+  color: var(--text, #0f172a);
+  font-size: 0.9rem;
+}
+
+.install-modal__steps p {
+  margin: 0 0 0.45rem;
+}
+.install-modal__steps ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+.install-modal__steps li + li {
+  margin-top: 0.35rem;
+}
+
+.install-modal__install,
+.install-modal__later {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 0.55rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.install-modal__install {
+  border: 0;
+  background: var(--primary, #2563eb);
+  color: #fff;
+}
+
+.install-modal__later {
+  margin-top: 0.55rem;
+  border: 1px solid var(--border, #cbd5e1);
+  background: transparent;
+  color: var(--text-muted, #64748b);
+}
+
+@keyframes install-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .install-modal-backdrop {
+    align-items: center;
+  }
+}
