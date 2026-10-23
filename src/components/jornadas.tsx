@@ -51,6 +51,13 @@ export const JornadasPanel = () => {
         </div>
 
         <div className="tableWrapper">
+          {selectedJornada === 8 && (
+            <div className="jornada-warning" role="alert">
+              Faltan por sumar los puntos del Rayo Vallecano - Atletico de
+              Bilbao.
+            </div>
+          )}
+
           {jornadaNoDisputada ? (
             <div className="jornada-empty">
               <span className="jornada-empty__emoji">⏳</span>
